@@ -1,0 +1,56 @@
+---
+title: "Untitled"
+author: "DGO"
+date: "2023-12-13"
+output: html_document
+---
+
+### Dat_conejos.csv contiene datos de abundancia de conejo (variable “AB_Oc”) medidos en distintos territorios de lince (variable “ID_Lp”) durante cinco años consecutivos.
+
+```{r}
+Dat_conejos <- read.csv2("H:/Biología/Master ByC UPO/Introducción a R/Datos/Dat_conejos.csv")
+#importamos el data.frame
+
+Dat_conejos$ID_Lp <- as.factor(Dat_conejos$ID_Lp)#el territorio es un factor
+Dat_conejos$AB_Oc <- as.numeric(Dat_conejos$AB_Oc)#abundancia como numérico
+```
+A. Transforma la variable "year" en factor.
+```{r}
+Dat_conejos$year <- as.factor(Dat_conejos$year)
+```
+B. ¿En qué año se registró la mayor abundancia de conejo?
+```{r}
+Max_abundance <- aggregate(AB_Oc ~ year, data = Dat_conejos, FUN = max,
+                           na.rm = T)
+View(Max_abundance)#793 conejos en el año 2000
+```
+C. Calcula la media de abundancia de conejos por año.
+```{r}
+Mean_abundance <- aggregate(AB_Oc ~ year, data = Dat_conejos, FUN = mean,
+                            na.rm = T)
+View(Mean_abundance)
+```
+D. Grafica la abundancia media de conejos a lo largo de los años (puntos y línea en la misma gráfica)
+```{r}
+plot(Mean_abundance$AB_Oc ~ Mean_abundance$year, pch = 2)#creamos el plot
+points(Mean_abundance)#añadios puntos
+lines(Mean_abundance)#añadimos lineas
+```
+E. Calcula la media de abundancia de conejos por año y territorio de lince#####
+```{r}
+Mean_abundance2 <- aggregate(AB_Oc ~ year + ID_Lp, data = Dat_conejos
+                             , FUN = mean, na.rm = T)
+View(Mean_abundance2)
+```
+F. ¿ En qué territorio de lince hubo mayor varianza en la abundancia de conejos? (considerando toda la serie temporal)
+```{r}
+var_abundance <- aggregate(AB_Oc ~ ID_Lp, data = Dat_conejos
+                             , FUN = var, na.rm = T)
+library(dplyr)
+var_abundance <- var_abundance %>% arrange(-AB_Oc)
+var_abundance[1,1]#el territorio con mayor varianza en la abundancia es el n52
+var_abundance[1,2]#con una varianza de 32255.64
+View(var_abundance)
+```
+
+
